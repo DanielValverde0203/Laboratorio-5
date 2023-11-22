@@ -1,0 +1,61 @@
+import argparse
+from PIL import Image
+import cv2
+
+
+#Definir la clase que representa el objeto imagen
+class Imagen:
+    def __init__(self, biblioteca, ruta_imagen):
+        self.biblioteca = biblioteca
+        self.ruta_imagen = ruta_imagen
+	
+    #Funcion para abrir la imagen y comprobar su existencia
+    def mostrar_imagen(self):
+        try:
+            with open(self.ruta_imagen, 'rb'):  
+                pass  
+
+            if self.biblioteca == 'pil':
+                self.mostrar_imagen_pil()
+            elif self.biblioteca == 'opencv':
+                self.mostrar_imagen_cv()
+            else:
+                print("Biblioteca no válida. Selecciona PIL u OpenCV.")
+        except Exception as e:
+            raise Exception(f"Error al procesar la imagen: {e}")
+    
+    #Abre imagen con la biblioteca PIL
+    def mostrar_imagen_pil(self):
+        try:
+            imagen = Image.open(self.ruta_imagen)
+            imagen.show()
+        except Exception as e:
+            raise Exception(f"Error al procesar la imagen con PIL: {e}")
+    #Abre la imagen con la biblioteca open CV
+    def mostrar_imagen_cv(self):
+        try:
+            imagen = cv2.imread(self.ruta_imagen)
+            cv2.imshow("Imagen", imagen)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+        except Exception as e:
+            raise Exception(f"Error al procesar la imagen con OpenCV: {e}")
+
+#Funcion que recibe los argumentos
+def parse_args():
+    parser = argparse.ArgumentParser(description="Programa para abrir y mostrar una imagen con diferentes bibliotecas.")
+    parser.add_argument("--biblioteca", choices=["pil", "opencv"], required=True, help="Biblioteca para procesamiento de imágenes")
+    parser.add_argument("--imagen", required=True, help="Ruta de la imagen a procesar")
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    imagen = Imagen(args.biblioteca, args.imagen)
+    
+    try:
+        imagen.mostrar_imagen()
+    except Exception as e:
+        print(f"Error al procesar la imagen: {e}")
+
+if __name__ == "__main__":
+    main()
